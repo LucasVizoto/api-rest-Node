@@ -1,6 +1,6 @@
-import { knex, Knex } from 'knex';
+import { Knex } from 'knex';
 
-export const config: Knex.Config = {
+const config: Knex.Config = {
     client: 'sqlite',
     connection: {
         filename: './db/app.db',
@@ -12,4 +12,4 @@ export const config: Knex.Config = {
     }
 }
 
-export const knex_conn = knex(config)
+export default config;
