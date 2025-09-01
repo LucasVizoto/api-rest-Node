@@ -8,12 +8,14 @@
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
     "module": "nodenext",
-    "target": "es2020",
+    "target": "es2022",
     "types": [],
     // For nodejs:
-    // "lib": ["esnext"],
+    "lib": ["ES2022"],
     // "types": ["node"],
     // and npm install -D @types/node
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
 
     // Other Outputs
     "sourceMap": true,
