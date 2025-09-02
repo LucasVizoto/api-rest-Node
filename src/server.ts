@@ -4,9 +4,22 @@ import { knex_conn } from "./database.js"
 const app = fastify()
 
 app.get('/hello', async () => {
-  const tables = knex_conn('sqlite_schema').select('*')
+  
+  const transaction = await knex_conn('transactions').insert({
+    id: crypto.randomUUID(),
+    title: 'New transaction',
+    amount: 5000,
+  }).returning('*')
 
-  return tables
+  const select_all = await knex_conn('transactions').select('*')
+
+  
+  const select_where = await knex_conn('transactions')
+  .where('amount', 1000)
+  .select('*')
+
+
+  return transaction 
 })
 app
   .listen({
