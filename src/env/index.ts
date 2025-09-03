@@ -1,8 +1,6 @@
 import 'dotenv/config'
 
 import { z } from 'zod'
-import { th } from 'zod/locales'
-
 //development, test ou production
 
 const envSchema = z.object({
