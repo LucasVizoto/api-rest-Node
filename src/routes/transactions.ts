@@ -49,10 +49,22 @@ export async function transactionRoutes(app: FastifyInstance){
         const {title, amount, type} = createTransactionBodySchema.parse(request.body)
         //nesse trecho é bem parecido com os **kwargs do python
 
+
+        let sessionId = request.cookies.sessionId
+
+        if(!sessionId){
+            sessionId = randomUUID()  
+
+            reply.cookie('sessionId', sessionId, {
+                path: '/',
+            })
+        }
+
         await knex_conn('transactions').insert({
             id: randomUUID(),
             title,
-            amount: type === 'credit' ? amount : amount * -1
+            amount: type === 'credit' ? amount : amount * -1,
+            //sessionId: sessionId,
         })
 
         //201 created
