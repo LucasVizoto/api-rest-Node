@@ -68,5 +68,42 @@ describe('Transactions Routes', () => {
         ])
     })
 
+    it.skip('should be able to get a specific transactions', async () => {
+        const createTransactionResponse = await request(app.server)
+        .post('/transactions')
+        .send({
+            title: 'New transaction',
+            amount: 5000,
+            type: 'credit'
+        })
+        .expect(201) //estou validando se meu retorno vai ser um 201
+
+        const cookies = createTransactionResponse.get('Set-Cookie')
+
+        if (!cookies) {
+            throw new Error('No Set-Cookie header returned from createTransactionResponse')
+        }
+
+        const listTransactionsResponse = await request(app.server)
+        .get('/transactions')
+        .set('Cookie', cookies)
+        .expect(200) //estou validando se meu retorno vai ser um 200
+        
+        const transactionId = listTransactionsResponse.body.transactions[0].id
+        
+        const getTransactionsResponse = await request(app.server)
+        .get(`/transactions/${transactionId}`)
+        .set('Cookie', cookies)
+        .expect(200) //estou validando se meu retorno vai ser um 200
+        
+
+        expect(getTransactionsResponse.body.transaction).toEqual(
+            expect.objectContaining({
+                title: 'New transaction',
+                amount: 5000
+            })
+        )
+    })
+
 
 })
