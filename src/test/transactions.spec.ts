@@ -1,4 +1,5 @@
-import { it, expect, test, beforeAll, afterAll, describe } from 'vitest'
+import { it, expect, test, beforeAll, afterAll, describe, beforeEach } from 'vitest'
+import { execSync } from 'node:child_process'
 import request from 'supertest'
 import { app } from '../app.js'
 
@@ -6,10 +7,16 @@ describe('Transactions Routes', () => {
 
     beforeAll(async () =>{
         await app.ready()
+
     })
 
     afterAll(async () => {
         await app.close()
+    })
+
+    beforeEach(()=>{
+        execSync('npm run knex migrate:rollback --all')
+        execSync('npm run knex migrate:latest')
     })
 
 // usar o it e o test são a mesma coisa, mas o único ponto diferente
@@ -30,4 +37,36 @@ describe('Transactions Routes', () => {
         })
         .expect(201) //estou validando se meu retorno vai ser um 201
     })
+    
+
+    it.skip('should be able to list all transactions', async () => {
+        const createTransactionResponse = await request(app.server)
+        .post('/transactions')
+        .send({
+            title: 'New transaction',
+            amount: 5000,
+            type: 'credit'
+        })
+        .expect(201) //estou validando se meu retorno vai ser um 201
+
+        const cookies = createTransactionResponse.get('Set-Cookie')
+
+        if (!cookies) {
+            throw new Error('No Set-Cookie header returned from createTransactionResponse')
+        }
+
+        const listTransactionsResponse = await request(app.server)
+        .get('/transactions')
+        .set('Cookie', cookies)
+        .expect(200) //estou validando se meu retorno vai ser um 200
+        
+        expect(listTransactionsResponse.body.transactions).toEqual([
+            expect.objectContaining({
+                title: 'New transaction',
+                amount: 5000
+            })
+        ])
+    })
+
+
 })

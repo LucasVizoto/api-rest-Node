@@ -1,7 +1,16 @@
-import 'dotenv/config'
+import { config } from 'dotenv'
 
 import { z } from 'zod'
 //development, test ou production
+
+if(process.env.NODE_ENV == 'test'){
+    config({ path: '.env.test' })
+} else {
+    config()
+}
+//fazendo a configuração apra caso seja rodado o teste
+// ele mude automaticamente para o ambiente de test
+
 
 const envSchema = z.object({
     NODE_ENV: z.enum(['development', 'test', 'production']).default('production'),

@@ -95,7 +95,7 @@ export async function transactionRoutes(app: FastifyInstance){
             id: randomUUID(),
             title,
             amount: type === 'credit' ? amount : amount * -1,
-            //sessionId: sessionId,
+            //sessionId: sessionId
         })
 
         //201 created
