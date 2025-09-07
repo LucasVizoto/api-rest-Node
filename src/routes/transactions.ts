@@ -6,6 +6,11 @@ import { error } from "node:console"
 import { checkSessionIdExists } from "../middlewares/check-session-id-exists.js"
 
 export async function transactionRoutes(app: FastifyInstance){
+    app.addHook('preHandler', async (request, reply) => {
+        console.log(`[${request.method}] ${request.url}`)
+    })
+    //gerando um log de todas as requisições
+    
     app.get('/', {
       preHandler:[checkSessionIdExists],
 
