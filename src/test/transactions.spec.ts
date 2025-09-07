@@ -67,7 +67,7 @@ describe('Transactions Routes', () => {
             })
         ])
     })
-
+    
     it.skip('should be able to get a specific transactions', async () => {
         const createTransactionResponse = await request(app.server)
         .post('/transactions')
@@ -77,7 +77,7 @@ describe('Transactions Routes', () => {
             type: 'credit'
         })
         .expect(201) //estou validando se meu retorno vai ser um 201
-
+        
         const cookies = createTransactionResponse.get('Set-Cookie')
 
         if (!cookies) {
@@ -105,5 +105,38 @@ describe('Transactions Routes', () => {
         )
     })
 
+    
+    it.skip('should be able to get the summary', async () => {
+        const createTransactionResponse = await request(app.server)
+        .post('/transactions')
+        .send({
+            title: 'New transaction',
+            amount: 5000,
+            type: 'credit'
+        })
+        const cookies = createTransactionResponse.get('Set-Cookie')
+
+        await request(app.server)
+        .post('/transactions')
+        .send({
+            title: 'New transaction',
+            amount: 2000,
+            type: 'debit'
+        })
+        
+
+        if (!cookies) {
+            throw new Error('No Set-Cookie header returned from createTransactionResponse')
+        }
+
+        const summaryResponse = await request(app.server)
+        .get('/transactions/summary')
+        .set('Cookie', cookies)
+        .expect(200) //estou validando se meu retorno vai ser um 200
+        
+        expect(summaryResponse.body.summary).toEqual({
+            amount: 3000
+        })
+    })
 
 })
